@@ -5,13 +5,14 @@ export type SchemeObject = number | string | boolean | SchemeObject[] | ((...arg
 export const parse = (code: string) => {
     let schemeObjects: SchemeObject[] = ["begin"];
 
-    const schemeObjectsFromTokens = readFromTokens(tokenise(code));
+    const tokens = tokenise(code);
 
-    if (Array.isArray(schemeObjectsFromTokens) && schemeObjectsFromTokens[0] === "begin") {
-        return schemeObjectsFromTokens;
+    const schemeObjectLists: SchemeObject[] = [];
+
+    while (tokens.length > 0) {
+        const schemeObjectsFromTokens = readFromTokens(tokens);
+        schemeObjects.push(schemeObjectsFromTokens);
     }
-
-    schemeObjects.push(schemeObjectsFromTokens);
 
     return schemeObjects;
 };

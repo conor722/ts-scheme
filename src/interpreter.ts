@@ -46,7 +46,7 @@ export const interpret = (expression: SchemeObject, env = defaultEnv): SchemeObj
             const [functionName, ...functionArguments] = name;
 
             if (typeof functionName !== "string") {
-                throw new Error("function name must be a string");
+                throw new Error("Function name must be a string");
             }
 
             if (!functionArguments.every(name => typeof name === "string")) {
@@ -83,7 +83,7 @@ export const interpret = (expression: SchemeObject, env = defaultEnv): SchemeObj
         );
 
         if (typeof proc !== "function") {
-            throw new Error(`First value in a function call exp must be a function, got ${proc} from ${expression[0]}`);
+            throw new Error(`First value in a function call exp must be a function, got ${proc}`);
         }
 
         return proc(...procArguments);

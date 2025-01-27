@@ -35,7 +35,7 @@ test("does not require an outer begin wrapper", () => {
 });
 
 test("runs a function defined in code", () => {
-    expect(interpret(parse("(begin (define (add-1 x) (+ 1 x)) (add-1 4)))"))).toEqual(5);
+    expect(interpret(parse("(begin (define (add-1 x) (+ 1 x)) (add-1 4))"))).toEqual(5);
 });
 
 test("runs a recursive function defined in code", () => {
