@@ -53,23 +53,62 @@ export const interpret = (expression: SchemeObject, env = defaultEnv): SchemeObj
                 throw new Error(`All argument names must be strings, received ${functionArguments}`);
             }
 
-            const func = (...args: SchemeObject[]) => {
-                if (args.length !== functionArguments.length) {
-                    throw new Error(`function ${functionName} takes ${functionArguments.length} arguments, received ${args.length}`);
+            const restIndex = functionArguments.findIndex(item => item === ".");
+            const isRestFunction = restIndex !== -1;
+
+            let func;
+
+            if (isRestFunction) {
+                if (restIndex !== functionArguments.length - 2) {
+                    throw new Error("Rest argument collector must be the last argument");
                 }
+                const actualNumberOfArguments = functionArguments.length - 1;
+                const nonRestArgumentNames = functionArguments.slice(0, functionArguments.length - 2);
+                const restArgumentName = functionArguments[functionArguments.length - 1];
 
-                for (const [name, value] of zip(functionArguments, args)) {
-                    env.push(name, value);
-                }
+                func = (...args: SchemeObject[]) => {
+                    console.log("in the func", {args});
+                    if (args.length < actualNumberOfArguments) {
+                        throw new Error(`function ${functionName} takes at least ${actualNumberOfArguments} arguments, received ${args.length}`);
+                    }
 
-                const functionResult = interpret(value, env);
+                    console.log({nonRestArgumentNames, restArgumentName});
 
-                for (const name of functionArguments) {
-                    env.pop(name);
-                }
+                    for (const [name, value] of zip(nonRestArgumentNames, args)) {
+                        env.push(name, value);
+                    }
 
-                return functionResult;
-            };
+                    env.push(restArgumentName, args.slice(nonRestArgumentNames.length));
+
+                    const functionResult = interpret(value, env);
+
+                    for (const name of nonRestArgumentNames) {
+                        env.pop(name);
+                    }
+
+                    env.pop(restArgumentName);
+
+                    return functionResult;
+                };
+            } else {
+                func = (...args: SchemeObject[]) => {
+                    if (args.length !== functionArguments.length) {
+                        throw new Error(`function ${functionName} takes ${functionArguments.length} arguments, received ${args.length}`);
+                    }
+
+                    for (const [name, value] of zip(functionArguments, args)) {
+                        env.push(name, value);
+                    }
+
+                    const functionResult = interpret(value, env);
+
+                    for (const name of functionArguments) {
+                        env.pop(name);
+                    }
+
+                    return functionResult;
+                };
+            }
 
             env.push(functionName, func);
         } else {
@@ -81,6 +120,8 @@ export const interpret = (expression: SchemeObject, env = defaultEnv): SchemeObj
         const procArguments: SchemeObject = expression.slice(1).map(
             (exp: SchemeObject): SchemeObject => interpret(exp)
         );
+
+        console.log({env, expression, proc, procArguments});
 
         if (typeof proc !== "function") {
             throw new Error(`First value in a function call exp must be a function, got ${proc}`);

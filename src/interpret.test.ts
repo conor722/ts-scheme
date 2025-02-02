@@ -47,3 +47,7 @@ test("runs a recursive function defined in code", () => {
 test("handles a string literal", () => {
     expect(interpret(parse("(begin \"hello world\")"))).toEqual("hello world");
 });
+
+test("handles rest arguments", () => {
+    expect(interpret(parse("(begin (define (contrived-list . args) (apply list args)) (contrived-list 1 2 3 4))"))).toEqual([1, 2, 3, 4]);
+});

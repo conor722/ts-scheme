@@ -1,5 +1,6 @@
-import {add, div, eq, gt, gte, lshift, lt, lte, minus, multiply, rshift} from "./operator";
+import {add, apply, div, eq, gt, gte, lshift, lt, lte, minus, multiply, rshift} from "./operator";
 import {SchemeObject} from "./parse";
+import {print} from "./print";
 
 const begin = (...args: SchemeObject[]) => args[args.length - 1];
 
@@ -18,6 +19,8 @@ const defaultEnv = new Map<string, SchemeObject>([
     ["pi", Math.PI],
     ["begin", begin],
     ["list", (...args: SchemeObject[]) => new Array(...args)],
+    ["apply", apply],
+    ["print", print],
 ]);
 
 class Env {
