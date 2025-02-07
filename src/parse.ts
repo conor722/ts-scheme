@@ -1,13 +1,21 @@
 import {tokenise} from "./tokenise";
 
-export type SchemeObject = number | string | boolean | SchemeObject[] | ((...args: SchemeObject[]) => SchemeObject);
+export const Nil = null;
+
+export type SchemeFunction = ((...args: SchemeObject[]) => SchemeObject)
+
+export type SchemeObject =
+    number
+    | string
+    | boolean
+    | SchemeObject[]
+    | SchemeFunction
+    | typeof Nil;
 
 export const parse = (code: string) => {
     let schemeObjects: SchemeObject[] = ["begin"];
 
     const tokens = tokenise(code);
-
-    const schemeObjectLists: SchemeObject[] = [];
 
     while (tokens.length > 0) {
         const schemeObjectsFromTokens = readFromTokens(tokens);
@@ -18,11 +26,11 @@ export const parse = (code: string) => {
 };
 
 const readFromTokens = (tokens: string[]): SchemeObject => {
-    if (tokens.length === 0) {
+    const token = tokens.shift();
+
+    if (token === undefined) {
         throw new Error("Unexpected EOF");
     }
-
-    const token = tokens.shift();
 
     if (token === "(") {
         const objectList = [];

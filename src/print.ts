@@ -1,6 +1,6 @@
 import {SchemeObject} from "./parse";
 
-export const print = (...args: SchemeObject[]) => {
+export const println = (...args: SchemeObject[]) => {
     console.log(...args);
     return args;
 };

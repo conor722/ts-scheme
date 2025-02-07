@@ -1,6 +1,6 @@
-import {add, apply, div, eq, gt, gte, lshift, lt, lte, minus, multiply, rshift} from "./operator";
+import {abs, add, apply, car, cdr, cons, div, eq, gt, gte, lshift, lt, lte, minus, multiply, rshift} from "./operator";
 import {SchemeObject} from "./parse";
-import {print} from "./print";
+import {println} from "./print";
 
 const begin = (...args: SchemeObject[]) => args[args.length - 1];
 
@@ -20,7 +20,11 @@ const defaultEnv = new Map<string, SchemeObject>([
     ["begin", begin],
     ["list", (...args: SchemeObject[]) => new Array(...args)],
     ["apply", apply],
-    ["print", print],
+    ["print", println],
+    ["cons", cons],
+    ["car", car],
+    ["cdr", cdr],
+    ["abs", abs],
 ]);
 
 class Env {
@@ -34,11 +38,15 @@ class Env {
     }
 
     get = (key: string) => {
-        if (!this.env.has(key) || this.env.get(key).length === 0) {
-            throw new Error(`"${key}" is not in env`);
+        if (!this.env.has(key) || this.env.get(key)?.length === 0) {
+            throw new Error(`"${key}" is not in efffnv`);
         }
 
         const valueList = this.env.get(key);
+
+        if (valueList === undefined) {
+            throw new Error(`${key} is not in env`);
+        }
 
         return valueList[valueList.length - 1];
     };
@@ -48,11 +56,21 @@ class Env {
             this.env.set(key, []);
         }
 
-        this.env.get(key).push(value);
+        this.getValueListOrThrow(key).push(value);
     };
 
     pop = (key: string) => {
-        this.env.get(key).pop();
+        this.getValueListOrThrow(key).pop();
+    };
+
+    private getValueListOrThrow = (key: string) => {
+        const valueList = this.env.get(key);
+
+        if (valueList === undefined) {
+            throw new Error(`${key} is not defined`);
+        }
+
+        return valueList;
     };
 }
 

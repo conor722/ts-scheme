@@ -48,6 +48,39 @@ test("handles a string literal", () => {
     expect(interpret(parse("(begin \"hello world\")"))).toEqual("hello world");
 });
 
+test("apply", () => {
+    expect(interpret(parse("(apply + (list 1 2 3 4))"))).toEqual(10);
+});
+
 test("handles rest arguments", () => {
     expect(interpret(parse("(begin (define (contrived-list . args) (apply list args)) (contrived-list 1 2 3 4))"))).toEqual([1, 2, 3, 4]);
+});
+
+test("sqrt", () => {
+    expect(interpret(parse("(define (square x) (* x x))" +
+        "(define (sqrt x)" +
+        "  (define (average lhs rhs)" +
+        "    (/ (+ lhs rhs) 2))" +
+        "  (define (good-enough? guess)" +
+        "    (< (abs (- (square guess) x)) .0001))" +
+        "  (define (improve guess)" +
+        "    (average guess (/ x guess)))" +
+        "  (define (try guess)" +
+        "    (if (good-enough? guess)" +
+        "guess" +
+        "(try (improve guess))))" +
+        "  (try 1))" +
+        "(sqrt 25)"))).closeTo(5, 0.0001);
+});
+
+test("let", () => {
+    expect(interpret(parse("(let ((a 3)) a)"))).toEqual(3);
+});
+
+test("lambda", () => {
+    expect(interpret(parse("((lambda (x) (* x x)) 3)"))).toEqual(9);
+});
+
+test("lambda as an argument", () => {
+    expect(interpret(parse("(apply (lambda (x y z) (+ x y z)) (list 1 2 3))"))).toEqual(6);
 });
