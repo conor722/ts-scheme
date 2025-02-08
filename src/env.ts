@@ -1,4 +1,25 @@
-import {abs, add, apply, car, cdr, cons, div, eq, gt, gte, lshift, lt, lte, minus, multiply, rshift} from "./operator";
+import {
+    abs,
+    add,
+    apply,
+    car,
+    cdr,
+    concat,
+    cons,
+    div,
+    empty,
+    eq,
+    gt,
+    gte,
+    lshift,
+    lt,
+    lte,
+    minus,
+    multiply,
+    push,
+    pushLeft,
+    rshift
+} from "./operator";
 import {SchemeObject} from "./parse";
 import {println} from "./print";
 
@@ -18,13 +39,20 @@ const defaultEnv = new Map<string, SchemeObject>([
     [">>", rshift],
     ["pi", Math.PI],
     ["begin", begin],
-    ["list", (...args: SchemeObject[]) => new Array(...args)],
+    ["list", (...args: SchemeObject[]) => {
+        console.log("list", {args});
+        return new Array(...args);
+    }],
     ["apply", apply],
     ["print", println],
     ["cons", cons],
     ["car", car],
     ["cdr", cdr],
     ["abs", abs],
+    ["empty?", empty],
+    ["push", push],
+    ["push-left", pushLeft],
+    ["concat", concat]
 ]);
 
 class Env {

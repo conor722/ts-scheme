@@ -84,3 +84,8 @@ test("lambda", () => {
 test("lambda as an argument", () => {
     expect(interpret(parse("(apply (lambda (x y z) (+ x y z)) (list 1 2 3))"))).toEqual(6);
 });
+
+test("map", () => {
+    expect(interpret(parse("(define (map fn args)(cond ((empty? args) (list)) (else (push-left (map fn (cdr args)) (fn (car args))))))" +
+        "(map (lambda (x) (* x x)) (list 1 2 3 4))"))).toEqual([1, 4, 9, 16]);
+});

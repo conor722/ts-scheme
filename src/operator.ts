@@ -67,11 +67,49 @@ export const car = (ls: SchemeObject) => {
     if (!Array.isArray(ls)) {
         throw new Error("argument to list functions must be a list");
     }
+
+    console.log("car: ", {ls, ret: ls[0]});
     return ls[0];
 };
 export const cdr = (ls: SchemeObject) => {
     if (!Array.isArray(ls)) {
         throw new Error("argument to list functions must be a list");
     }
+
+    console.log({ls, ret: ls.slice(1)});
     return ls.slice(1);
+};
+
+export const empty = (a0: SchemeObject): boolean => {
+    if (Array.isArray(a0)) {
+        return !Boolean(a0.length);
+    }
+
+    throw new Error("empty can only be applied to a list");
+};
+
+export const push = (a0: SchemeObject, a1: SchemeObject) => {
+    if (!Array.isArray(a0)) {
+        throw new Error("First argument to push must be a list");
+    }
+
+    return a0.concat([a1]);
+};
+
+export const pushLeft = (a0: SchemeObject, a1: SchemeObject) => {
+    if (!Array.isArray(a0)) {
+        throw new Error("First argument to push must be a list");
+    }
+
+    return [a1].concat(a0);
+};
+
+export const concat = (a0: SchemeObject, a1: SchemeObject) => {
+    if (!Array.isArray(a0) || !Array.isArray(a1)) {
+        throw new Error("Both arguments to extend must be lists");
+    }
+
+    console.log("concating", {a0, a1});
+
+    return a0.concat(a1);
 };
