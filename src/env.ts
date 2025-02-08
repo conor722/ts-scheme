@@ -39,10 +39,7 @@ const defaultEnv = new Map<string, SchemeObject>([
     [">>", rshift],
     ["pi", Math.PI],
     ["begin", begin],
-    ["list", (...args: SchemeObject[]) => {
-        console.log("list", {args});
-        return new Array(...args);
-    }],
+    ["list", (...args: SchemeObject[]) => new Array(...args)],
     ["apply", apply],
     ["print", println],
     ["cons", cons],

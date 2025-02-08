@@ -3,20 +3,17 @@ import defaultEnv from "./env";
 import Env from "./env";
 import {zip} from "./itertools";
 
-const stringLiteralRegex = new RegExp("\"([^\"\\]|\\[\s\S])*\"");
+const stringLiteralRegex = /\"([^\"\\]|\\[\s\S])*\"/;
 
 const createClosure = (argumentLabels: string[], functionBlock: SchemeObject, env: typeof Env): SchemeObject => {
-    let closedValue: SchemeObject = functionBlock;
 
     if (typeof functionBlock === "string" && !argumentLabels.includes(functionBlock)) {
         try {
-            closedValue = env.get(functionBlock);
+            return env.get(functionBlock);
         } catch (e) {
-            closedValue = functionBlock;
+            return functionBlock;
             // Means it isn't in the env, cannot close variable with it
         }
-
-        return closedValue;
     }
 
     if (!Array.isArray(functionBlock)) {
@@ -33,8 +30,6 @@ const createSchemeFunction = (name: string, argumentLabels: string[], functionBl
     let func: (...args: SchemeObject[]) => SchemeObject;
 
     let closedFunction = createClosure(argumentLabels, functionBlock, env);
-    console.log({functionBlock});
-    console.log({closedFunction});
 
     if (!Array.isArray(closedFunction)) {
         closedFunction = [closedFunction];
@@ -231,7 +226,6 @@ export const interpret = (expression: SchemeObject, env = defaultEnv): SchemeObj
 
         return returnValue;
     } else if (Array.isArray(expression)) {
-        console.log({expression});
         const procName = expression[0];
 
         const proc = typeof procName === "function" ? procName : interpret(procName, env);

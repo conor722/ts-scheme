@@ -10,6 +10,14 @@ test("evaluates a basic expression", () => {
     ).closeTo(314.159, 0.001);
 });
 
+test("if (false branch)", () => {
+    expect(interpret(parse("(if (= 1 2) \"Yes\" \"No\")"))).toEqual("No");
+});
+
+test("if (true branch)", () => {
+    expect(interpret(parse("(if (= 1 1) \"Yes\" \"No\")"))).toEqual("Yes");
+});
+
 test("evaluates a multiple conditional", () => {
     expect(
         interpret(
@@ -83,6 +91,10 @@ test("lambda", () => {
 
 test("lambda as an argument", () => {
     expect(interpret(parse("(apply (lambda (x y z) (+ x y z)) (list 1 2 3))"))).toEqual(6);
+});
+
+test("lambda as a returned value", () => {
+    expect(interpret(parse("(define (add-x x) (lambda (y) (+ x y))) ((add-x 4) 5)"))).toEqual(9);
 });
 
 test("map", () => {

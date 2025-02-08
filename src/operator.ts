@@ -41,8 +41,6 @@ export const lshift = assertBothArgumentsAreNumbersWrapper((a0: number, a1: numb
 export const apply = (...args: SchemeObject[]): SchemeObject => {
     const [fn, argsArray] = args;
 
-    console.log({args});
-
     if (typeof fn !== "function") {
         throw new Error("First argument to 'apply' must be a function");
     }
@@ -68,7 +66,6 @@ export const car = (ls: SchemeObject) => {
         throw new Error("argument to list functions must be a list");
     }
 
-    console.log("car: ", {ls, ret: ls[0]});
     return ls[0];
 };
 export const cdr = (ls: SchemeObject) => {
@@ -76,7 +73,6 @@ export const cdr = (ls: SchemeObject) => {
         throw new Error("argument to list functions must be a list");
     }
 
-    console.log({ls, ret: ls.slice(1)});
     return ls.slice(1);
 };
 
@@ -108,8 +104,6 @@ export const concat = (a0: SchemeObject, a1: SchemeObject) => {
     if (!Array.isArray(a0) || !Array.isArray(a1)) {
         throw new Error("Both arguments to extend must be lists");
     }
-
-    console.log("concating", {a0, a1});
-
+    
     return a0.concat(a1);
 };
