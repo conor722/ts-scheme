@@ -39,7 +39,7 @@ class Env {
 
     get = (key: string) => {
         if (!this.env.has(key) || this.env.get(key)?.length === 0) {
-            throw new Error(`"${key}" is not in efffnv`);
+            throw new Error(`"${key}" is not in env`);
         }
 
         const valueList = this.env.get(key);

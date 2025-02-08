@@ -5,11 +5,40 @@ import {zip} from "./itertools";
 
 const stringLiteralRegex = new RegExp("\"([^\"\\]|\\[\s\S])*\"");
 
+const createClosure = (argumentLabels: string[], functionBlock: SchemeObject, env: typeof Env): SchemeObject => {
+    let closedValue: SchemeObject = functionBlock;
+
+    if (typeof functionBlock === "string" && !argumentLabels.includes(functionBlock)) {
+        try {
+            closedValue = env.get(functionBlock);
+        } catch (e) {
+            closedValue = functionBlock;
+            // Means it isn't in the env, cannot close variable with it
+        }
+
+        return closedValue;
+    }
+
+    if (!Array.isArray(functionBlock)) {
+        return functionBlock;
+    }
+
+    return functionBlock.map(fb => createClosure(argumentLabels, fb, env));
+};
+
 const createSchemeFunction = (name: string, argumentLabels: string[], functionBlock: SchemeObject[], env: typeof Env): SchemeFunction => {
     const restIndex = argumentLabels.findIndex(item => item === ".");
     const isRestFunction = restIndex !== -1;
 
     let func: (...args: SchemeObject[]) => SchemeObject;
+
+    let closedFunction = createClosure(argumentLabels, functionBlock, env);
+    console.log({functionBlock});
+    console.log({closedFunction});
+
+    if (!Array.isArray(closedFunction)) {
+        closedFunction = [closedFunction];
+    }
 
     if (isRestFunction) {
         if (restIndex !== argumentLabels.length - 2) {
@@ -32,7 +61,7 @@ const createSchemeFunction = (name: string, argumentLabels: string[], functionBl
 
             let functionResult;
 
-            functionBlock.forEach((block) => {
+            closedFunction.forEach((block) => {
                 functionResult = interpret(block, env);
             });
 
@@ -61,7 +90,7 @@ const createSchemeFunction = (name: string, argumentLabels: string[], functionBl
 
             let functionResult: SchemeObject;
 
-            functionBlock.forEach((block) => {
+            closedFunction.forEach((block) => {
                 functionResult = interpret(block, env);
             });
 
@@ -202,7 +231,10 @@ export const interpret = (expression: SchemeObject, env = defaultEnv): SchemeObj
 
         return returnValue;
     } else if (Array.isArray(expression)) {
-        const proc: SchemeObject = interpret(expression[0], env);
+        console.log({expression});
+        const procName = expression[0];
+
+        const proc = typeof procName === "function" ? procName : interpret(procName, env);
 
         const procArguments: SchemeObject = expression.slice(1).map(
             (exp: SchemeObject): SchemeObject => interpret(exp)
@@ -215,7 +247,9 @@ export const interpret = (expression: SchemeObject, env = defaultEnv): SchemeObj
         const s = proc(...procArguments);
 
         return s;
+    } else if (typeof expression === "function") {
+        return expression;
     }
-    
+
     return Nil;
 };

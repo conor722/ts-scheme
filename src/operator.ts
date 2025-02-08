@@ -41,6 +41,8 @@ export const lshift = assertBothArgumentsAreNumbersWrapper((a0: number, a1: numb
 export const apply = (...args: SchemeObject[]): SchemeObject => {
     const [fn, argsArray] = args;
 
+    console.log({args});
+
     if (typeof fn !== "function") {
         throw new Error("First argument to 'apply' must be a function");
     }
@@ -48,7 +50,7 @@ export const apply = (...args: SchemeObject[]): SchemeObject => {
     if (!Array.isArray(argsArray)) {
         throw new Error("Second argument to 'apply' must be an array of arguments");
     }
-    
+
     return fn(...argsArray);
 };
 
