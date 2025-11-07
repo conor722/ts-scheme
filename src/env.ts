@@ -52,6 +52,10 @@ const defaultEnv = new Map<string, SchemeObject>([
     ["concat", concat]
 ]);
 
+/**
+ * An env contains all name value mappings in a Scheme program,
+ * anything that isn't part of the base syntax must be in the env to be referred to.
+ */
 class Env {
     env: Map<string, SchemeObject[]>;
 

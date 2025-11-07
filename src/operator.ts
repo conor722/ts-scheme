@@ -1,3 +1,8 @@
+/**
+ * Various operators and small functions which can be used as scheme functions
+ * or to build scheme functions.
+ */
+
 import {SchemeObject} from "./parse";
 
 const makeInfix = (fn: (a0: number, a1: number) => number) =>
@@ -104,6 +109,6 @@ export const concat = (a0: SchemeObject, a1: SchemeObject) => {
     if (!Array.isArray(a0) || !Array.isArray(a1)) {
         throw new Error("Both arguments to extend must be lists");
     }
-    
+
     return a0.concat(a1);
 };

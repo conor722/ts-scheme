@@ -4,6 +4,9 @@ export const Nil = null;
 
 export type SchemeFunction = ((...args: SchemeObject[]) => SchemeObject)
 
+/**
+ * The only types that should ever exist in our scheme env or which a scheme function can return.
+ */
 export type SchemeObject =
     number
     | string
@@ -15,7 +18,7 @@ export type SchemeObject =
 export const parse = (code: string) => {
     let schemeObjects: SchemeObject[] = ["begin"];
 
-    const tokens = tokenise(code);
+    const tokens = tokenise(code).map(token => token.value);
 
     while (tokens.length > 0) {
         const schemeObjectsFromTokens = readFromTokens(tokens);

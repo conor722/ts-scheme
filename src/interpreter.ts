@@ -5,8 +5,16 @@ import {zip} from "./itertools";
 
 const stringLiteralRegex = /\"([^\"\\]|\\[\s\S])*\"/;
 
+/**
+ * Create a closure by replacing variable names inside a function block with the values assigned to those names
+ * present in the env at the point this closure is made - only replace names that aren't the
+ * names of arguments passed to the function the block belongs to.
+ *
+ * @param argumentLabels
+ * @param functionBlock
+ * @param env
+ */
 const createClosure = (argumentLabels: string[], functionBlock: SchemeObject, env: typeof Env): SchemeObject => {
-
     if (typeof functionBlock === "string" && !argumentLabels.includes(functionBlock)) {
         try {
             return env.get(functionBlock);
@@ -23,18 +31,29 @@ const createClosure = (argumentLabels: string[], functionBlock: SchemeObject, en
     return functionBlock.map(fb => createClosure(argumentLabels, fb, env));
 };
 
+/**
+ * Create a scheme function with the given name, argument labels, function block,
+ * and env to be used within the function block.
+ *
+ * @param name
+ * @param argumentLabels
+ * @param functionBlock
+ * @param env
+ */
 const createSchemeFunction = (name: string, argumentLabels: string[], functionBlock: SchemeObject[], env: typeof Env): SchemeFunction => {
     const restIndex = argumentLabels.findIndex(item => item === ".");
     const isRestFunction = restIndex !== -1;
 
     let func: (...args: SchemeObject[]) => SchemeObject;
 
+    // Any variables that aren't arguments must be replaced with the values assigned to those variable names.
     let closedFunction = createClosure(argumentLabels, functionBlock, env);
 
     if (!Array.isArray(closedFunction)) {
         closedFunction = [closedFunction];
     }
 
+    // handle ... syntax
     if (isRestFunction) {
         if (restIndex !== argumentLabels.length - 2) {
             throw new Error("Rest argument collector must be the last argument");
@@ -104,7 +123,15 @@ const createSchemeFunction = (name: string, argumentLabels: string[], functionBl
 
     return func;
 };
-
+/**
+ * Recur through our tree of scheme objects, evaluating sub-trees and the final tree into scheme objects.
+ * Basically keeps recursively evaluating a tree, replacing function calls with the resulting value in the env,
+ * evaluating basic syntax like 'if's, replacing variable names with the values bound to them,
+ * etc until we are left with 'leaf' values like strings, numbers etc.
+ *
+ * @param expression
+ * @param env
+ */
 export const interpret = (expression: SchemeObject, env = defaultEnv): SchemeObject => {
     if (typeof expression == "string" && stringLiteralRegex.test(expression)) {
         return expression.slice(1, -1);
