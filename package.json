@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
+    "start": "node dist/index.js",
     "build": "tsc",
     "test": "vitest"
   },
