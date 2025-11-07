@@ -8,6 +8,7 @@ const rl = readline.createInterface({
 });
 
 const repl = () => {
+    console.log("Really simple scheme interpretation! - type 'exit' to leave");
     rl.question(`>`, input => {
         if (input === "exit") {
             return rl.close();
