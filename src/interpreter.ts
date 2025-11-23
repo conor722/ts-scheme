@@ -404,9 +404,17 @@ export const interpret = (
       );
     }
 
-    const s = proc(...procArguments);
-
-    return s;
+    try {
+      const s = proc(...procArguments);
+      return s;
+    } catch (error: any) {
+      // If the error already has source location, re-throw it
+      if (error.name === "SchemeError") {
+        throw error;
+      }
+      // Otherwise, wrap it with source location from the call site
+      throw new SchemeError(error.message, getSourceLocation(expression));
+    }
   } else if (typeof expression === "function") {
     return expression;
   }
