@@ -32,7 +32,14 @@ export type SchemeObject =
   | typeof Nil;
 
 export const parse = (code: string) => {
-  let schemeObjects: SchemeObject[] = ["begin"];
+  // Create a synthetic identifier for 'begin' with no source location
+  const beginIdentifier: SchemeIdentifier = {
+    __type: "identifier",
+    value: "begin",
+    sourceLocation: { lineNumber: 0, line: "" },
+  };
+
+  let schemeObjects: SchemeObject[] = [beginIdentifier];
 
   const tokens = tokenise(code);
 

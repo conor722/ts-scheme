@@ -196,8 +196,6 @@ export const interpret = (
         expression.sourceLocation
       );
     }
-  } else if (typeof expression === "string") {
-    return env.get(expression);
   } else if (typeof expression === "number") {
     return expression;
   } else if (

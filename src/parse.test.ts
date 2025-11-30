@@ -5,7 +5,7 @@ test("converts the string into a list of scheme objects", () => {
   const result = parse("(define r 10) (* pi (* r r))");
 
   // Check structure - identifiers are now wrapped with source location metadata
-  expect(result[0]).toBe("begin");
+  expect(result[0]).toMatchObject({ __type: "identifier", value: "begin" });
   expect(Array.isArray(result[1])).toBe(true);
   expect(Array.isArray(result[2])).toBe(true);
 
